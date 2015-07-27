@@ -13,9 +13,10 @@ npm install httpbackendext
 include angular mock script
 https://github.com/angular/bower-angular-mocks
 
-## Simple Usage
+## Usage
 
-```javascript
+```
+javascript
 var HttpBackend = require('httpbackend');
 var backend = null;
 
@@ -26,7 +27,64 @@ describe('Test Http backend methods', function() {
     });
 
     afterEach(function() {
+        backend.verifyNoOutstandingExpectation();
         backend.clear();
+    });
+
+    it('Test when (POST) with function as response', function() {
+        backend.when('POST', /result/).respond(function(method, url, data) {
+            return [200, 'abuga'];
+        });
+
+        browser.get('/');
+
+        element(by.css('#buttonPOST')).click();
+
+        var result = element(by.binding('result'));
+        expect(result.getText()).toEqual('abuga');
+    });
+
+    it('Test expect function', function() {
+        backend.expect('POST', /result/);
+        browser.get('/');
+        element(by.css('#buttonPOST')).click();
+    });
+
+    it('Test expectGET function', function() {
+        backend.expectGET(/result/);
+        browser.get('/');
+        element(by.css('#buttonGET')).click();
+    });
+
+    it('Test expectPOST function', function() {
+        backend.expectPOST(/result/);
+        browser.get('/');
+        element(by.css('#buttonPOST')).click();
+    });
+
+    it('Test expectPOST and expectGET functions', function() {
+        backend.expectPOST(/result/);
+        backend.expectGET(/result/);
+        browser.get('/');
+        element(by.css('#buttonPOST')).click();
+        element(by.css('#buttonGET')).click();
+    });
+
+    it('Test combined when and expect functions', function() {
+        backend.expectPOST(/result/);
+        backend.expectGET(/result/);
+        backend.whenPOST(/result/).respond('raoulPOST');
+        backend.whenGET(/result/).respond('raoulGET');
+        browser.get('/');
+
+        element(by.css('#buttonPOST')).click();
+        var result = element(by.binding('result'));
+        expect(result.getText()).toEqual('raoulPOST');
+
+        element(by.css('#buttonGET')).click();
+        result = element(by.binding('result'));
+        expect(result.getText()).toEqual('raoulGET');
+
     });
 
 	it('Test whenGET with string response', function() {
@@ -51,9 +109,9 @@ describe('Test Http backend methods', function() {
         expect(result.getText()).toEqual('postedData');
     });
 });
+
 ```
 
-## Advanced Usage
 
 ### Workflow
 
@@ -79,6 +137,7 @@ For perfomance issue you can disable auto sync:
 ### Httpbackend Methods
 
 * `when GET, POST, HEAD, PUT, JSONP` add a fixtures, accept literal object, or a callback
+* `expect GET, POST, HEAD, PUT, JSONP` add expectation. verify expectations with backend.verifyNoOutstandingExpectation()
 * `sync`, manualy sync fixtures
 * `clear`, clear http backend module
 * `reset`, reset all fixture
