@@ -14,6 +14,10 @@ describe('Test Http backend methods', function() {
     });
 
     it('Test whenGET with string url', function() {
+        expect(true).toEqual(true);
+    });
+
+    it('Test whenGET with string url', function() {
         backend.whenGET("/result.json").respond('raoul');
 
         browser.get('/');
