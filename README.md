@@ -1,13 +1,13 @@
-# Http Backend
+# Http Backend Ext
 
-[![Build Status](https://travis-ci.org/nchaulet/httpbackend.svg?branch=master)](https://travis-ci.org/nchaulet/httpbackend)
+[![Build Status](https://travis-ci.org/Gamereclaim/httpbackendext.svg?branch=master)](https://travis-ci.org/Gamereclaim/httpbackendext)
 
 Http backend mock module for protractor
 
 ## Installation
 
 ```shell
-npm install httpbackend
+npm install httpbackendext
 ```
 
 include angular mock script
